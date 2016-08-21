@@ -99,7 +99,7 @@ They are evaluated before addition and subtraction.
 But... What really is precedence, after all? Probably you've heard about it
 in your math classes. It defines when each operation will be evaluated.
 For example, `3 * 2 + 2` will result in `8`, but `3 + 2 * 2` results in `7`, and
-not `12`. That's because multiplications occurs first. So `3 + 2 * 2` is the same as
+not `12`. That's because multiplications occur first. So `3 + 2 * 2` is the same as
 `3 + (2 * 2)`, and `3 * 2 + 2` is exactly `(3 * 2) + 2`.
 
 ```c
