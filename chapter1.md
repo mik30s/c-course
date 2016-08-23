@@ -90,11 +90,17 @@ If we go further, those terms get translated to:
 
 Now we're getting somewhere. Finally, after parsing everything, we get:
 
-    number ("-" (number ("*" number)))
+    42 ("-" (6 ("*" 12)))
 
 The final result is `42 - (6 * 12)`. And that's exactly what we
 want: multiplication and division with higher precedence.
-They are evaluated before addition and subtraction.
+They are evaluated before addition and subtraction. If we first had
+the multiplication to happen before subtraction, we'd end up with
+something like this:
+
+    (42 ("*" 6)) ("-" 12)
+
+In other ~~numbers~~ words: `(42 * 6) - 12`.
 
 But... What really is precedence, after all? Probably you've heard about it
 in your math classes. It defines when each operation will be evaluated.
