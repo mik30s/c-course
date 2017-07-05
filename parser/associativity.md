@@ -4,7 +4,7 @@
 
     (1 << (2 << (3 << 4)))
 
-This one is simpler to parse. Considering the following grammar:
+This one is simpler to parse. Consider the following grammar:
 
     shift-operator
       integer-constant
@@ -13,7 +13,7 @@ This one is simpler to parse. Considering the following grammar:
     integer-constant
       [0-9]+
 
-Parser would try to match integer-constant, '<<' and then
+With this the parser would try to match integer-constant, '<<' and then
 the recursive shift-operator. Resulting in this tree:
 
     shift-operator(<<):
@@ -34,7 +34,7 @@ Now things get a little complicated here. Grammar:
       integer-constant
       shift-operator '<<' integer-constant
 
-This would result in an inifite recursion had we followed the previous
+This would result in an inifite recursion if we had followed the previous
 parser logic. There are simple solutions, one of them is to parse
 those rules as a list of nodes (e.g. const, '<<', const, '<<' ...),
 then either build the tree backwards, or keep a state for accumulation.
@@ -59,7 +59,7 @@ For example:
 
     return lhs; //< final expression
 
-This parser would result in the following tree:
+This parser would produce the following tree:
 
     shift-operator(<<):
       shift-operator(<<):
