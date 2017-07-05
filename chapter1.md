@@ -1,14 +1,4 @@
-
 # Chapter 1: you're not a grown kid.
-
-First of all, we're implementing the compiler right now.
-
-    But that's nothing to do with learning C!
-
-Actually, you will need to work with a vast set of tools, provided by C and its
-standard library. It's okay to assume you might learn by doing contrived/toy code, however,
-for a better study, implementing real world code and/or complex algorithms will lead
-your brain to a better understanding of programming concepts and paradigms.
 
 Our objective here is to emit machine code from text, then it's safe to assume
 we will address problems like the following:
@@ -48,28 +38,35 @@ where the expression ends, so other functions can start from there.
 
 Of course, we need grammar, so this is how our expressions will be evaluated:
 
-    expression := ["-"] term {("+"|"-") term}
-    
-    term := factor {("*"|"/") factor}
-    
-    factor := number | "(" expression ")"
+    expression
+      '-'? term 
+      expression '-' term
+      expression '+' term
 
-Let's examine it from the bottom-up:
+    term
+      factor
+      term '*' factor
+      term '/' factor
 
- + `Factor` is made of a number, or an expression inside parentheses.
- + `Term` is made of a factor alone, or one followed by a
-multiplication or division by another factor (and it can go further, forming a list).
- + `Expression` is made of a term (that may or may not be followed by minus) alone, or one
-followed by an addition or subtraction of another term.
+    factor
+      number
+      '(' expression ')'
 
-`{x}` means a list of zero or more x's, `[x]` means none or one x,
-`(x)` means at least one x, and `x|y` means obligatory one of x or y,
-but never both at the same it.
+    number
+      [0-9]+
+
+Let's examine it from the bottom up (because it's easier to reason about):
+
++ A `factor` may match a `number` (a sequence of digits), or an `expression`
+  inside parentheses.
++ A `term` matches either a `factor`, or a `term` following either a '*' or '/' and a `factor`.
++ An `expression` matches either a `term` with an optional negative sign '-',
+  or an `expression` following either an addition, or subtraction sign, and a `term`.
 
 Okay, this is cool and all, but what are we achieving with all that strange syntax?
 Actually, nothing, because we didn't write any code yet. However, if
-you see the big picture, we've just set a rule of precedence! `Factors`
-can only exist inside `Terms`, and `Terms` can only exist inside `Expressions`.
+you see the big picture, we've just set a rule of precedence! `factors`
+can only exist inside `terms`, and `terms` can only exist inside `expressions`.
 If the parser receives something like this:
 
     42 - 6 * 12
@@ -79,18 +76,41 @@ We should expect to see it parsed like this:
     expression
 
 Heh, of course, first it's expected to see an expression. But what does an
-expression tell us?
+expression tell us? Which one of the possible matches can we go with?
 
-    term ("-" term)
+Well, the best match for `42 - 6` seems to be the second one:
 
-Hm, so the expression turned into two terms with a subtraction operation.
-If we go further, those terms get translated to:
+    expression '-' term
 
-    factor ("-" (factor ("*" factor)))
+Because there's a subtraction sign and a number before it, the
+first match `'-'? term` wouldn't make sense. But the second match
+fits it perfectly. Now, the next step is to expand that first `expression`.
+Notice how we're going one match by one, this is how the theory works,
+you match one grammar at a time, then the final result should the
+the best match. Anyway, using `expression` to match `42`, we have
+no other choice other than `'-'? term`, because term can go
+alone (without the negative sign) in the first place, we are left
+with just `term`:
+
+    term '-' term
+
+Now, matching the first `term`, there's also no other choice
+better than `factor`, because the other last two options
+don't fit the `42` text.
+
+    factor '-' term
+
+You got the idea. Let's just go on and expand the rest:
+
+    number '-' term
+    number '-' (term '*' factor)
+    number '-' (factor '*' factor)
+    number '-' (number '*' factor)
+    number '-' (number '*' number)
 
 Now we're getting somewhere. Finally, after parsing everything, we get:
 
-    42 ("-" (6 ("*" 12)))
+    '42' '-' ('6' '*' '12')
 
 The final result is `42 - (6 * 12)`. And that's exactly what we
 want: multiplication and division with higher precedence.
@@ -98,9 +118,9 @@ They are evaluated before addition and subtraction. If we first had
 the multiplication to happen before subtraction, we'd end up with
 something like this:
 
-    (42 ("*" 6)) ("-" 12)
+    ('42' '*' '6') '-' '12'
 
-In other ~~numbers~~ words: `(42 * 6) - 12`.
+In other words: `(42 * 6) - 12`.
 
 But... What really is precedence, after all? Probably you've heard about it
 in your math classes. It defines when each operation will be evaluated.
@@ -108,13 +128,4 @@ For example, `3 * 2 + 2` will result in `8`, but `3 + 2 * 2` results in `7`, and
 not `12`. That's because multiplications occur first. So `3 + 2 * 2` is the same as
 `3 + (2 * 2)`, and `3 * 2 + 2` is exactly `(3 * 2) + 2`.
 
-```c
-// TODO
-    
-```
-
-## Item2: A better face (or how to make it smile)
-
-## Item3: Code generation
-
-
++  TODO
