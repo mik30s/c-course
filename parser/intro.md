@@ -1,14 +1,13 @@
 # Chapter 1: you're not a grown kid.
 
-Our objective here is to emit machine code from text, then it's safe to assume
-we will address problems like the following:
+Our objective here is to emit machine code from text. Meaning we will address the following problems:
 
  + Make sense out of text;
  + Analyse wrong grammar and/or unknown syntax;
  + Generate clear error messages;
  + Emit optimized machine code;
 
-And other problems that we might encounter as we go on.
+And many other problems that we will encounter as we go on.
 
 ## Item1: Transforming text into useful information
 
@@ -17,6 +16,8 @@ something we can manage later? There are different ways to achieve
 this, and [LR parser](https://en.wikipedia.org/wiki/LR_parser) is
 the one we will be using due to its simplicity. If you want further reading about parsers,
 [this](https://en.wikipedia.org/wiki/Category:Parsing_algorithms) might help you.
+And this Dick Grune's [Parsing Techniques](https://dickgrune.com/Books/PTAPG_1st_Edition/BookBody.pdf) is 
+available for free in case you want to go deeper. It covers a myraid of parsing techniques and algorithms.
 
 Long story short: LR parsers read input from left
 to right, [bottom-up](https://en.wikipedia.org/wiki/Bottom-up_parsing). It means
@@ -36,7 +37,7 @@ makes sure it parsed it all correct, it returns a struct containing the exact pa
 of string, and a pointer to the end of that. Why, you ask? Because we need to know
 where the expression ends, so other functions can start from there.
 
-Of course, we need grammar, so this is how our expressions will be evaluated:
+Of course, we need a grammar that shows how our expressions will be evaluated:
 
     expression
       '-'? term 
@@ -122,8 +123,8 @@ something like this:
 
 In other words: `(42 * 6) - 12`.
 
-But... What really is precedence, after all? Probably you've heard about it
-in your math classes. It defines when each operation will be evaluated.
+But... What really is precedence, after all? You've probably heard about it
+in your math classes. It defines when each operation will be evaluated in an expression.
 For example, `3 * 2 + 2` will result in `8`, but `3 + 2 * 2` results in `7`, and
 not `12`. That's because multiplications occur first. So `3 + 2 * 2` is the same as
 `3 + (2 * 2)`, and `3 * 2 + 2` is exactly `(3 * 2) + 2`.
